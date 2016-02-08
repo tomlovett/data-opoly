@@ -1,5 +1,5 @@
 <DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="Data-opoly">
 <head>
 	<title>Data-opoly</title>
 	<link rel="stylesheet" href="main.css">
@@ -9,6 +9,26 @@
 </head>
 
 <body>
+
+	<div class="container">
+		<!-- background board image -->
+		<!-- Top Row -->
+		<div class="corner">Free Parking</div>
+		<div ng-repeat="tile in topRow" class="tile"></div>
+		<div class="corner">Go To Jail</div>
+		<!-- Side Rows -->
+		<div ng-repeat="tile in leftCol" class="tile"></div>
+		<div ng-repeat="tile in rightCol" class="tile rightCol"></div>
+		<!-- Bottom Row -->
+		<div class="corner">
+			Just Visiting
+			<div class="Jail">Jail</div>
+		</div>
+		<div ng-repeat="tile in bottomRow" class="tile"></div>
+		<div class="corner">GO</div>
+	</div>
+
+
 
 <!-- Free Parking, ng-repeat 9 tiles, Go To Jail -->
 <!-- ng-repeat 9 tiles south (with formatting to occupy space), ng-repeat 9 tiles south on the right (float right) -->
