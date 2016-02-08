@@ -1,5 +1,13 @@
 var DataOpoly = angular.module('Data-opoly', [])
 
+DataOpoly.controller('primary', ['$scope', 'utility', function($scope, utility) {
+	$scope.topRow = [21, 22, 23, 24, 25, 26, 27, 28, 29]
+	$scope.leftCol = [19, 18, 17, 16, 15, 14, 13, 12, 11]
+	$scope.rightCol = [31, 32, 33, 34, 35, 36, 37, 38, 39]
+	$scope.bottomRow = [9, 8, 7, 6, 5, 4, 3, 2, 1]
+
+
+}])
 
 DataOpoly.factory('utility', function() {
 
@@ -8,9 +16,6 @@ DataOpoly.factory('utility', function() {
 // controller
 	// changing between views
 	// applying colors to tiles
-
-// factory
-	
 
 	var processRawData = function(rawData) {
 		console.log('rawData: ', rawData)
@@ -82,4 +87,59 @@ DataOpoly.factory('utility', function() {
 		processRawData : processRawData,
 		tappedTen : tappedTen
 	}
+})
+
+DataOpoly.factory('preloads', function() {
+	var Tile = function(ID, class) {
+		this.ID = ID
+		this.class = class
+		this.color = ''
+	}
+
+	var tileList = {
+		0: new Tile(0, 'corner')
+		1: new Tile(1, 'prop')
+		2: new Tile(2, )
+		3: new Tile(3, 'prop'
+		4: new Tile(4, )
+		5: new Tile(5, )
+		6: new Tile(6, 'prop')
+		7: new Tile(7, )
+		8: new Tile(8, 'prop')
+		9: new Tile(9, 'prop')
+		10: new Tile(10, 'corner')
+		10.5: new Tile(10.5, )
+		11: new Tile(11, 'prop')
+		12: new Tile(12, )
+		13: new Tile(13, 'prop')
+		14: new Tile(14, 'prop')
+		15: new Tile(15, )
+		16: new Tile(16, 'prop')
+		17: new Tile(17, )
+		18: new Tile(18, 'prop')
+		19: new Tile(19, 'prop')
+		20: new Tile(20, 'corner')
+		21: new Tile(21, 'prop')
+		22: new Tile(22, )
+		23: new Tile(23, 'prop')
+		24: new Tile(24, 'prop')
+		25: new Tile(25, )
+		26: new Tile(26, 'prop')
+		27: new Tile(27, 'prop')
+		28: new Tile(28, )
+		29: new Tile(29, 'prop')
+		30: new Tile(30, 'corner')
+		31: new Tile(31, 'prop')
+		32: new Tile(32, 'prop')
+		33: new Tile(33, )
+		34: new Tile(34, 'prop')
+		35: new Tile(35, )
+		36: new Tile(36, )
+		37: new Tile(37, 'prop')
+		38: new Tile(38, 'prop')
+		39: new Tile(39, )
+	}
+
+	}
+
 })

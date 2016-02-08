@@ -1,15 +1,58 @@
-.container {
+div {
+	display: inline-block;
+	position: relative;
+}
 
+.board {
+	padding: 1px 0 0 1px;
+	background-image: url("white_board.png");
+	height: 508px;
+	width: 502px;
+}
+
+.row {
+	display: block;
 }
 
 .corner {
-
+	height: 68px;
+	width: 68px;
+	border: 1px solid red;
 }
 
 .tile {
+	height: 68px;
+	width: 37px;
+	border: 1px solid red;
+}
 
+.tile.prop {
+	height: 50px;
+}
+
+.horiz {
+	display: block;
+	height: 37px;
+	width: 68px;
+}
+
+.horiz.prop {
+	width: 50px;
 }
 
 .rightCol {
 	float: right;
+}
+
+.leftCol {
+	float: left;
+}
+
+.jail {
+	position: absolute;
+	top: 0;
+	right: 0;
+	background-color: green;
+	height: 45px;
+	width: 45px;
 }
