@@ -10,19 +10,15 @@ div {
 	width: 502px;
 }
 
-.row {
-	display: block;
-}
-
-.corner {
-	height: 68px;
-	width: 68px;
+.corner.tile {
+	height: 67px;
+	width: 67px;
 	border: 1px solid red;
 }
 
 .tile {
 	height: 68px;
-	width: 37px;
+	width: 38px;
 	border: 1px solid red;
 }
 
@@ -32,14 +28,19 @@ div {
 
 .horiz {
 	display: block;
-	height: 37px;
+	height: 38px;
 	width: 68px;
 }
 
 .horiz.prop {
 	width: 50px;
-	height: 37px;
+	height: 38px;
 }
+
+.right.prop {
+	margin-left: 18px;
+}
+
 
 .rightCol {
 	float: right;
@@ -49,11 +50,20 @@ div {
 	float: left;
 }
 
+.top {
+	vertical-align: top;
+}
+
+.bottom {
+	vertical-align: bottom;
+}
+
+
 .jail {
 	position: absolute;
 	top: 0;
 	right: 0;
-	background-color: green;
-	height: 45px;
-	width: 45px;
+	height: 50px;
+	width: 50px;
+	border: 1px solid red;
 }

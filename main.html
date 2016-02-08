@@ -12,25 +12,23 @@
 	<div class="board">
 
 		<div class="row">
-			<div class="corner">20</div>
-			<div ng-repeat="tile in topRow" class="tile" ng-class="tile.styles">{{tile.ID}}</div>
-			<div class="corner">30</div>
+			<div ng-repeat="tile in topRow" class="tile" ng-class="tile.styles" ng-style="tile.color">{{tile.ID}}</div>
 		</div>
 
 		<div class="leftCol">
-			<div ng-repeat="tile in leftCol" class="tile horiz" ng-class="tile.styles">{{tile.ID}}</div>
+			<div ng-repeat="tile in leftCol" class="tile horiz" ng-class="tile.styles" ng-style="tile.color">{{tile.ID}}</div>
 		</div>
 		<div class="rightCol">
-			<div ng-repeat="tile in rightCol" class="tile horiz" ng-class="tile.styles">{{tile.ID}}</div>
+			<div ng-repeat="tile in rightCol" class="tile horiz" ng-class="tile.styles" ng-style="tile.color">{{tile.ID}}</div>
 		</div>
 
 
-		<div class="row">
-			<div class="corner">10
-				<div class="Jail">Jail</div>
+		<div class="row bottom">
+			<div class="tile corner bottom" ng-class="tiles[10].styles" ng-style="tiles[10].color">
+				<div class="Jail" style="background-color: white;"></div>
+				<div class="Jail" ng-class="tiles[10.5].styles" ng-style="tiles[10.5].color"></div>
 			</div>
-			<div ng-repeat="tile in bottomRow" class="tile" ng-class="tile.styles">{{tile.ID}}</div>
-			<div class="corner">GO</div>
+			<div ng-repeat="tile in bottomRow" class="tile" ng-class="tile.styles" ng-style="tile.color">{{tile.ID}}</div>
 		</div>
 	</div>
 
