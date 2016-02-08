@@ -14,57 +14,44 @@ DataOpoly.controller('primary', ['$scope', 'utility', 'preloads', function($scop
 
 	var gameTaps = utility.gameTaps
 
+
 	gameTaps = _.map(gameTaps, function(obj) {
-		return obj['avg']
+		return obj['perc_of_whole']
 	})
 
+
 	$scope.colors = utility.processRawData(gameTaps)
-	console.log($scope.colors)
+	// $scope.colors = utility.processRawData(utility.tappedTen)
 
-	$scope.colors = utility.processRawData(utility.tappedTen)
-	for (var i =0; i < 40; i++) {
-		$scope.tiles[i].setColor($scope.colors[i])
+	$scope.assignColors = function(colorSet) {
+		$scope.tiles[10.5].setColor(colorSet[10.5])
+		for (var i = 0; i < 40; i++) {
+			$scope.tiles[i].setColor(colorSet[i])
+		}
 	}
-	$scope.tiles[10.5].setColor($scope.colors[10.5])
 
+	$scope.assignColors($scope.colors)
 
 }])
 
 DataOpoly.factory('utility', function() {
 
-// how to corral individual tiles by id number? $scope.tiles[i]
-
-// controller
-	// changing between views
-	// applying colors to tiles
-
-	var processRawData = function(rawData) {
-		// console.log('rawData: ', rawData)
-		var min = _.min(_.values(rawData))
-		var max = _.max(_.values(rawData))
-		var normalizedData = _.mapObject(rawData, function(val) {
-			return normalize(val, min, max)
-		})
-		// console.log('normalizedData: ', normalizedData)
-		var colorSet = _.mapObject(normalizedData, function(val) {
+	var processRawData = function(data) {
+		var min = _.min(_.values(data))
+		var max = _.max(_.values(data))
+		data = normalizeDataSet(data, min, max)
+		var colorSet = _.mapObject(data, function(val) {
 			return numberToColor(val)
 		})
-		// console.log('colorSet: ', colorSet)
 		return colorSet
-		// for each in Raw
-
 	}
 
-	var normalize = function(val, min, max) {
-		return (val - min)/(max - min)
+	var normalizeDataSet = function(dataSet, min, max) {
+		var output = _.mapObject(dataSet, function(val) {
+			return (val - min)/(max - min)
+		})
+		return output
 	}
-
-	var colors = [
-		{ red: 0,   green: 0,   blue: 255 }, 	// blue
-		{ red: 0,   green: 255, blue: 0   }, 	// green
-		{ red: 255, green: 255, blue: 0   }, 	// yellow
-		{ red: 255, green: 0,   blue: 0   }  	// red
-	]
 
 	var numberToColor = function(val) {
 		var floor   = 0
@@ -74,10 +61,10 @@ DataOpoly.factory('utility', function() {
 			floor   = 0
 			ceiling = 0
 		} else if (val >= 1) {
-			floor   = 3
-			ceiling = 3
+			floor   = 2
+			ceiling = 2
 		} else {
-			val     = val * 3
+			val     = val * 2
 			floor   = Math.floor(val)
 			ceiling = floor + 1
 			diff    = val - floor
@@ -85,10 +72,15 @@ DataOpoly.factory('utility', function() {
 
 		var output = 'rgb('		
 		output += getColorValue(floor, ceiling, diff, 'red'  ) + ', '
-		output += getColorValue(floor, ceiling, diff, 'green') + ', '
-		output += getColorValue(floor, ceiling, diff, 'blue' ) + ')'
+		output += getColorValue(floor, ceiling, diff, 'green') + ', 0)'
 		return output
 	}
+
+	var colors = [
+		{ red: 0,   green: 255, blue: 0   }, 	// green
+		{ red: 255, green: 255, blue: 0   }, 	// yellow
+		{ red: 255, green: 0,   blue: 0   }  	// red
+	]
 
 	var getColorValue = function (floor, ceiling, diff, color) {
 		var lowerVal = colors[floor][color]
@@ -163,7 +155,7 @@ DataOpoly.factory('preloads', function() {
 	    setColor : function(color) {
 			this.color = { 
 				'background-color': color,
-				'opacity' : '.5'
+				'opacity' : '.70'
 			}
 		},
 		setHover : function(text) {
@@ -232,6 +224,10 @@ DataOpoly.factory('preloads', function() {
 		rightCol  : rightCol,
 		bottomRow : bottomRow
 	}
+})
 
+DataOpoly.factory('route', function() {
+	var load = function(path) {
 
+	}
 })

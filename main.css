@@ -11,14 +11,14 @@ div {
 }
 
 .corner.tile {
-	height: 67px;
-	width: 67px;
+	height: 65px;
+	width: 65px;
 	border: 1px solid red;
 }
 
 .tile {
-	height: 68px;
-	width: 38px;
+	height: 67px;
+	width: 38.25px;
 	border: 1px solid red;
 }
 
@@ -28,13 +28,13 @@ div {
 
 .horiz {
 	display: block;
-	height: 38px;
-	width: 68px;
+	height: 38.25px;
+	width: 67px;
 }
 
 .horiz.prop {
 	width: 50px;
-	height: 38px;
+	height: 38.25px;
 }
 
 .right.prop {
