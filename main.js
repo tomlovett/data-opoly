@@ -8,29 +8,40 @@ DataOpoly.controller('primary', ['$scope', 'utility', 'preloads', function($scop
 	$scope.rightCol  = preloads.rightCol
 	$scope.bottomRow = preloads.bottomRow
 
-	// console.log($scope.tiles)
 
-	$scope.colors = {}
+	$scope.mode = '' // game_taps, first_taps, loc_by_turn, tapped, pred, success
+
+	$scope.changeMode = function(mode) {
+		$scope.mode = mode
+
+	}
+
+
+	$scope.fire = function(id) {
+		console.log('fire: ', id)
+		if ($scope.mode == 'preds' || $scope.mode == 'succs') {
+			$scope.predSuccs(id, $scope.mode)
+		} else {
+			displayData(id, $scope.mode)
+		}
+	}
 
 	var gameTaps = utility.gameTaps
-
-
-	gameTaps = _.map(gameTaps, function(obj) {
+	gameTaps = _.mapObject(gameTaps, function(obj) {
 		return obj['perc_of_whole']
+		// return obj['std_dev'] / obj['avg']
 	})
 
+	var colors = utility.processRawData(gameTaps)
+	// colors = utility.processRawData(utility.tappedTen)
 
-	$scope.colors = utility.processRawData(gameTaps)
-	// $scope.colors = utility.processRawData(utility.tappedTen)
-
-	$scope.assignColors = function(colorSet) {
+	var assignColors = function(colorSet) {
 		$scope.tiles[10.5].setColor(colorSet[10.5])
 		for (var i = 0; i < 40; i++) {
 			$scope.tiles[i].setColor(colorSet[i])
 		}
 	}
-
-	$scope.assignColors($scope.colors)
+	assignColors(colors)
 
 }])
 
@@ -70,16 +81,16 @@ DataOpoly.factory('utility', function() {
 			diff    = val - floor
 		}
 
-		var output = 'rgb('		
-		output += getColorValue(floor, ceiling, diff, 'red'  ) + ', '
-		output += getColorValue(floor, ceiling, diff, 'green') + ', 0)'
-		return output
+		var rgb = 'rgb('		
+		rgb += getColorValue(floor, ceiling, diff, 'red'  ) + ', '
+		rgb += getColorValue(floor, ceiling, diff, 'green')
+		return rgb + ', 0)'		// returns 'rgb(x, x, 0)'
 	}
 
 	var colors = [
-		{ red: 0,   green: 255, blue: 0   }, 	// green
-		{ red: 255, green: 255, blue: 0   }, 	// yellow
-		{ red: 255, green: 0,   blue: 0   }  	// red
+		{ red:   0, green: 255  }, 	// pure green
+		{ red: 255, green: 255  }, 	// pure yellow
+		{ red: 255, green:   0  }  	// pure red
 	]
 
 	var getColorValue = function (floor, ceiling, diff, color) {

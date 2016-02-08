@@ -3,6 +3,21 @@ div {
 	position: relative;
 }
 
+.toolbar {
+	float: right;
+	border: 1px solid black;
+	height: 100%;
+	width: 200px;
+}
+
+.toolbarBottom {
+	height: 66%;
+	width: 100%;
+	border: 1px solid black;
+	position: absolute;
+	bottom: 0;
+}
+
 .board {
 	padding: 1px 0 0 1px;
 	background-image: url("white_board.png");
@@ -17,7 +32,7 @@ div {
 }
 
 .tile {
-	height: 67px;
+	height: 66px;
 	width: 38.25px;
 	border: 1px solid red;
 }
@@ -29,7 +44,7 @@ div {
 .horiz {
 	display: block;
 	height: 38.25px;
-	width: 67px;
+	width: 66px;
 }
 
 .horiz.prop {
