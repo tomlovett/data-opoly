@@ -1,0 +1,1 @@
+{"all_props_tapped": {"median": 31.0, "avg": 31.4104, "std_dev": 10.31988}, "turns_per_lap": {"median": 5.0, "avg": 4.72, "std_dev": 2.35136}, "all_tapped": {"median": 34.0, "avg": 33.9448, "std_dev": 11.01631}}
