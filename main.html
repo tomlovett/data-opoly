@@ -13,23 +13,23 @@
 
 		<div class="row">
 			<div class="corner">20</div>
-			<div ng-repeat="tile in topRow" class="tile">{{tile}}</div>
-			<div class="corner">Go To Jail</div>
+			<div ng-repeat="tile in topRow" class="tile" ng-class="tile.styles">{{tile.ID}}</div>
+			<div class="corner">30</div>
 		</div>
 
 		<div class="leftCol">
-			<div ng-repeat="tile in leftCol" class="tile horiz">{{tile}}</div>
+			<div ng-repeat="tile in leftCol" class="tile horiz" ng-class="tile.styles">{{tile.ID}}</div>
 		</div>
 		<div class="rightCol">
-			<div ng-repeat="tile in rightCol" class="tile horiz">{{tile}}</div>
+			<div ng-repeat="tile in rightCol" class="tile horiz" ng-class="tile.styles">{{tile.ID}}</div>
 		</div>
 
 
 		<div class="row">
-			<div class="corner">Just Visiting
+			<div class="corner">10
 				<div class="Jail">Jail</div>
 			</div>
-			<div ng-repeat="tile in bottomRow" class="tile">{{tile}}</div>
+			<div ng-repeat="tile in bottomRow" class="tile" ng-class="tile.styles">{{tile.ID}}</div>
 			<div class="corner">GO</div>
 		</div>
 	</div>
