@@ -18,7 +18,7 @@
 			<button ng-click="changeMode('preds')">Predecessors</button>
 			<button ng-click="changeMode('succs')">Successors</button>
 
-			<input type="text" inputmode="numeric" maxlength="2" value="0" ng-model="turn" ng-show="turnSelector">
+			<span ng-show="turnSelector">Turn: </span><input type="text" inputmode="numeric" maxlength="2" value="0" ng-model="turn" ng-show="turnSelector">
 		</div>
 		<div class="toolbarBottom">
 			<p>{{bottomText}}</p>
@@ -40,9 +40,9 @@
 
 
 		<div class="row bottom">
-			<div class="tile corner bottom" ng-class="tiles[10].styles" ng-style="tiles[10].color" ng-click="fire(tile.id)">
+			<div class="tile corner bottom" ng-class="tiles[10].styles" ng-style="tiles[10].color" ng-click="fire(10)">
 				<div class="Jail" style="background-color: white;"></div>
-				<div class="Jail" ng-class="tiles[10.5].styles" ng-style="tiles[10.5].color" ng-click="fire(tile.id)"></div>
+				<div class="Jail" ng-class="tiles[10.5].styles" ng-style="tiles[10.5].color" ng-click="fire(10.5)"></div>
 			</div>
 			<div ng-repeat="tile in bottomRow" class="tile" ng-class="tile.styles" ng-style="tile.color" ng-click="fire(tile.id)"></div>
 		</div>

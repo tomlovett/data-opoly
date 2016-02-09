@@ -1,6 +1,6 @@
 var DataOpoly = angular.module('Data-opoly', [])
 
-DataOpoly.controller('primary', ['$scope', 'process', 'preloads', 'route', 'load', function($scope, process, preloads, route, load) {
+DataOpoly.controller('primary', ['$scope', 'process', 'preloads', 'load', function($scope, process, preloads, load) {
 
 	$scope.tiles     = preloads.tiles
 	$scope.topRow    = preloads.topRow
@@ -12,12 +12,14 @@ DataOpoly.controller('primary', ['$scope', 'process', 'preloads', 'route', 'load
 
 	$scope.changeMode = function(mode) {
 		$scope.mode = mode
-		route.change(mode, $scope)
+		var data = load.change(mode, $scope)
 		$scope.bottomText = preloads.text[mode]
+		data = process.processRawData(data)
+		assignColors(data)
 	}
 
 	$scope.fire = function(id) {
-		console.log('fire: ', id)
+		console.log('fire: ', id) // issue with Jail/JV
 		if ($scope.mode == 'preds' || $scope.mode == 'succs') {
 			$scope.predSuccs(id, $scope.mode)
 		} else {
@@ -43,7 +45,6 @@ DataOpoly.controller('primary', ['$scope', 'process', 'preloads', 'route', 'load
 	})
 
 	var colors = process.processRawData(gameTaps)
-	// colors = process.processRawData(preloads.tappedTen)
 
 
 	assignColors(colors)
@@ -193,8 +194,6 @@ DataOpoly.factory('preloads', function() {
 	var bottomRow = _.map([9, 8, 7, 6, 5, 4, 3, 2, 1, 0], function(index) {
 		return tiles[index]	})
 
-	var tappedTen = {"10.5": 0.6904, "0": 0.584, "2": 0.6177, "3": 0.6657, "4": 0.7047, "5": 0.7413, "6": 0.7796, "1": 0.5767, "8": 0.7928, "9": 0.7807, "10": 0.7603, "11": 0.7469, "12": 0.7425, "13": 0.7103, "14": 0.7082, "15": 0.7346, "16": 0.7357, "17": 0.7359, "18": 0.7471, "19": 0.7481, "20": 0.7471, "21": 0.7387, "22": 0.7343, "23": 0.744, "24": 0.7404, "25": 0.7288, "26": 0.7272, "27": 0.7269, "28": 0.7151, "29": 0.7111, "30": 0.6904, "31": 0.7102, "32": 0.6939, "33": 0.6753, "34": 0.6666, "35": 0.6523, "36": 0.6215, "37": 0.6008, "38": 0.5984, "39": 0.5891, "7": 0.8042}
-
 	var gameTaps = {
 		"0":  { "std_dev": 2.25744, "perc_of_whole": 0.02113 }, 
 		"1":  { "std_dev": 2.22234, "perc_of_whole": 0.02104 }, 
@@ -247,7 +246,6 @@ DataOpoly.factory('preloads', function() {
 		leftCol   : leftCol,
 		rightCol  : rightCol,
 		bottomRow : bottomRow,
-		tappedTen : tappedTen,
 		gameTaps  : gameTaps,
 		text 	  : text
 	}
@@ -255,20 +253,26 @@ DataOpoly.factory('preloads', function() {
 
 // 'route' and 'load' very similar, could combine into one?
 
-DataOpoly.factory('route', function() {
+DataOpoly.factory('load', function() {
 	var change = function(mode, scope) {
 		if (mode !== 'locByTurn' && mode !== 'tapped') {
 			scope.turnSelector = false
 		} else {
 			scope.turnSelector = true
 		}
+		var data = load(mode)
 	}
 
+	var load = function(mode, info) {
+		var data = ''
+		if (mode == 'firstTaps' || mode == 'gameTaps') {
+			data = 'load basic from file'
+		} else {
+			data = 'load 0'
+		}
+		return data
+	}
 	return {
 		change : change
 	}
-})
-
-DataOpoly.factory('load', function() {
-	return 'data'
 })
