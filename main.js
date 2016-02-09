@@ -1,3 +1,8 @@
+// color code key on the right
+// taps buttons
+// explanatory text
+
+
 var DataOpoly = angular.module('Data-opoly', [])
 
 DataOpoly.controller('primary', ['$scope', 'process', 'preloads', function($scope, process, preloads) {
@@ -11,45 +16,56 @@ DataOpoly.controller('primary', ['$scope', 'process', 'preloads', function($scop
 	$scope.mode = 'gameTaps'
 	$scope.tapsBtn = 'avg'
 	$scope.turn = 0
-	$scope.liveTile = 0
+	$scope.liveTile = $scope.tiles[0]
 
 	$scope.bottomText = preloads.text[$scope.mode]
 
-
 	$scope.fire = function(id) {
-		console.log('fire: ', id) // issue with Jail/JV on top of each other
-		$scope.liveTile = id
+		$scope.liveTile.unHighlight()
+		$scope.liveTile = $scope.tiles[id]  // issue with Jail/Just Visiting overlap
+		$scope.liveTile.highlight()
 		if ($scope.mode == 'preds' || $scope.mode == 'succs') {
-			$scope.predSuccs($scope.mode)
+			$scope.routeDisplay($scope.mode)
 		} else {
 			hoverData()
 		}
 	}
 
-	$scope.tapDisplays = function(mode) {
-		$scope.mode = mode
-		$scope.turnSelector = false
-		$scope.updateDisplay($scope.tapsBtn)
+	$scope.tapUpdate = function(attr) {
+		$scope.tapsBtn = attr
+		$scope.routeDisplay($scope.mode)
 	}
 
-	$scope.turnDisplays = function(mode) {
+	$scope.routeDisplay = function(mode) {
 		$scope.mode = mode
-		$scope.turnSelector = true
-		$scope.updateDisplay($scope.turn)
+		var attr = ''
+		$scope.bottomText = preloads.text[$scope.mode]
+		if (mode == 'gameTaps' || mode == 'firstTaps') {
+			attr = $scope.tapsBtn
+			tapsTurnsTiles(true, false, false)
+		} else if (mode == 'locByTurn' || mode == 'tapped') {
+			if ($scope.turn > 20) $scope.turn = 20
+			attr = $scope.turn
+			tapsTurnsTiles(false, true, false)
+		} else {
+			attr = $scope.liveTile.id
+			tapsTurnsTiles(false, false, true)
+		}
+		$scope.updateDisplay(attr)
 	}
 
-	$scope.predSuccs = function(mode) {
-		$scope.mode = mode
-		$scope.turnSelector = false
-		$scope.updateDisplay($scope.liveTile)
+	var tapsTurnsTiles = function(taps, turns, tiles) {
+		$scope.tapSelector = taps
+		$scope.turnSelector = turns
+		if (!turns) { $scope.turn = 0 }
+		if (!tiles) { $scope.liveTile = $scope.tiles[0] }
 	}
 
 	$scope.updateDisplay = function(attr) {
 		var data = rawData[$scope.mode][attr]
-		data = process.dataToColors(data)
+		data = process.dataToColors(data, $scope.mode)
 		assignColors(data)
 	}
-
 
 	var hoverData = function() {
 		return 'data specific to that tile'
@@ -61,16 +77,34 @@ DataOpoly.controller('primary', ['$scope', 'process', 'preloads', function($scop
 			$scope.tiles[i].setColor(colorSet[i])
 		}
 	}
-/* pre-loading display because I like it */
+
+	$scope.turnDownForWhat = function(event) {
+		// 38 = up, 40 = down
+		if (event.keyCode == 38 && $scope.turn < 20) {
+			$scope.turn += 1
+			$scope.routeDisplay($scope.mode)
+		} else if (event.keyCode == 40 && $scope.turn > 0) {
+			$scope.turn -= 1
+			$scope.routeDisplay($scope.mode)
+		}
+	}
+
+	$scope.routeDisplay('gameTaps')
 
 }])
 
 DataOpoly.factory('process', function() {
 
-	var dataToColors = function(data) {
+	var dataToColors = function(data, mode) {
 		var min = _.min(_.values(data))
 		var max = _.max(_.values(data))
-		data = normalizeDataSet(data, min, max)
+		if (mode === 'tapped') {
+			min = 0;
+			max = 1;
+		}
+		if (max !== 0) {
+			data = normalizeDataSet(data, min, max)
+			}
 		var colorSet = _.mapObject(data, function(val) {
 			return numberToColor(val)
 		})
@@ -79,6 +113,7 @@ DataOpoly.factory('process', function() {
 
 	var normalizeDataSet = function(dataSet, min, max) {
 		var output = _.mapObject(dataSet, function(val) {
+			if (max - min <= 0) return 0
 			return (val - min)/(max - min)
 		})
 		return output
@@ -138,9 +173,14 @@ DataOpoly.factory('preloads', function() {
 				'background-color': color,
 			}
 		},
-		setHover : function(text) {
-			'set text'
+		highlight : function() {
+			this.color['border'] = '1px solid white'
+		},
+		unHighlight : function() {
+			var color = this.color['background-color']
+			this.setColor(color)
 		}
+
 	}
 
 	var tiles = {

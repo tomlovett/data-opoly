@@ -12,14 +12,20 @@
 
 	<div class="toolbar">
 		<div class="toolbarTop">
-			<button ng-click="tapDisplays('gameTaps')">Game Taps</button>
-			<button ng-click="tapDisplays('firstTaps')">First Taps</button>
-			<button ng-click="turnDisplays('locByTurn')">Location By Turn</button>
-			<button ng-click="turnDisplays('tapped')">Tapped</button>
-			<button ng-click="predSuccs('preds')">Predecessors</button>
-			<button ng-click="predSuccs('succs')">Successors</button>
+			<button ng-click="routeDisplay('gameTaps')">Game Taps</button>
+			<button ng-click="routeDisplay('firstTaps')">First Taps</button>
+			<button ng-click="routeDisplay('locByTurn')">Location By Turn</button>
+			<button ng-click="routeDisplay('tapped')">Tapped</button>
+			<button ng-click="routeDisplay('preds')">Predecessors</button>
+			<button ng-click="routeDisplay('succs')">Successors</button>
 
-			<span ng-show="turnSelector">Turn: </span><input type="text" inputmode="numeric" maxlength="2" value="0" ng-model="turn" ng-show="turnSelector" ng-change="turnDisplays(mode)">
+			<div ng-show="tapSelector">
+				<button ng-click="tapUpdate('avg')">Average</button>
+				<button ng-click="tapUpdate('stdDev')">Standard Deviation</button>
+			</div>
+
+			<span ng-show="turnSelector">Turn: </span><input type="text" inputmode="numeric" maxlength="2" value="0" ng-model="turn" ng-show="turnSelector" ng-change="routeDisplay(mode)" ng-keydown="turnDownForWhat($event)">
+
 		</div>
 		<div class="toolbarBottom">
 			<p>{{bottomText}}</p>

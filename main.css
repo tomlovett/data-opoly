@@ -11,7 +11,7 @@ div {
 }
 
 .toolbarBottom {
-	height: 66%;
+	height: 80%;
 	width: 100%;
 	border: 1px solid black;
 	position: absolute;
@@ -26,16 +26,16 @@ div {
 }
 
 .corner.tile {
-	height: 65px;
-	width: 65px;
-	border: 1px solid black;
+	height: 64px;
+	width: 64px;
+	border: 2px solid black;
 	opacity: .7;
 }
 
 .tile {
 	height: 66px;
-	width: 38.25px;
-	border: 1px solid black;
+	width: 36.25px;
+	border: 2px solid black;
 	opacity: .7;
 }
 
@@ -45,13 +45,13 @@ div {
 
 .horiz {
 	display: block;
-	height: 38.25px;
+	height: 36.25px;
 	width: 66px;
 }
 
 .horiz.prop {
 	width: 50px;
-	height: 38.25px;
+	height: 36.25px;
 }
 
 .right.prop {
