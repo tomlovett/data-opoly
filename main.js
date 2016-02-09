@@ -46,8 +46,15 @@ DataOpoly.controller('primary', ['$scope', 'process', 'preloads', 'load', functi
 
 	var colors = process.dataToColors(gameTaps)
 
-
 	assignColors(colors)
+
+	var newbie = {}
+	newbie[10.5] = rawData['gameTaps'][10.5]['avg']
+	for (var i = 0; i < 40; i++) {
+		newbie[i] = rawData['gameTaps'][i]['avg']
+	}
+
+	console.log(newbie)
 
 }])
 
@@ -260,6 +267,8 @@ DataOpoly.factory('load', function() {
 		}
 		var data = load(mode)
 	}
+
+// rawData
 
 	var load = function(mode, info) {
 		var data = ''
