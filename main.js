@@ -1,6 +1,6 @@
 var DataOpoly = angular.module('Data-opoly', [])
 
-DataOpoly.controller('primary', ['$scope', 'process', 'preloads', 'load', function($scope, process, preloads, load) {
+DataOpoly.controller('primary', ['$scope', 'process', 'preloads', function($scope, process, preloads) {
 
 	$scope.tiles     = preloads.tiles
 	$scope.topRow    = preloads.topRow
@@ -9,25 +9,49 @@ DataOpoly.controller('primary', ['$scope', 'process', 'preloads', 'load', functi
 	$scope.bottomRow = preloads.bottomRow
 
 	$scope.mode = 'gameTaps'
+	$scope.tapsBtn = 'avg'
+	$scope.turn = 0
+	$scope.liveTile = 0
 
-	$scope.changeMode = function(mode) {
+	$scope.bottomText = preloads.text[$scope.mode]
+
+
+	$scope.fire = function(id) {
+		console.log('fire: ', id) // issue with Jail/JV on top of each other
+		$scope.liveTile = id
+		if ($scope.mode == 'preds' || $scope.mode == 'succs') {
+			$scope.predSuccs($scope.mode)
+		} else {
+			hoverData()
+		}
+	}
+
+	$scope.tapDisplays = function(mode) {
 		$scope.mode = mode
-		var data = load.change(mode, $scope)
-		$scope.bottomText = preloads.text[mode]
+		$scope.turnSelector = false
+		$scope.updateDisplay($scope.tapsBtn)
+	}
+
+	$scope.turnDisplays = function(mode) {
+		$scope.mode = mode
+		$scope.turnSelector = true
+		$scope.updateDisplay($scope.turn)
+	}
+
+	$scope.predSuccs = function(mode) {
+		$scope.mode = mode
+		$scope.turnSelector = false
+		$scope.updateDisplay($scope.liveTile)
+	}
+
+	$scope.updateDisplay = function(attr) {
+		var data = rawData[$scope.mode][attr]
 		data = process.dataToColors(data)
 		assignColors(data)
 	}
 
-	$scope.fire = function(id) {
-		console.log('fire: ', id) // issue with Jail/JV on top of each other
-		if ($scope.mode == 'preds' || $scope.mode == 'succs') {
-			$scope.predSuccs(id, $scope.mode)
-		} else {
-			displayData(id, $scope.mode)
-		}
-	}
 
-	var displayData = function(id, mode) {
+	var hoverData = function() {
 		return 'data specific to that tile'
 	}
 
@@ -38,23 +62,6 @@ DataOpoly.controller('primary', ['$scope', 'process', 'preloads', 'load', functi
 		}
 	}
 /* pre-loading display because I like it */
-	var gameTaps = preloads.gameTaps
-	gameTaps = _.mapObject(gameTaps, function(obj) {
-		return obj['perc_of_whole']
-		// return obj['std_dev'] / obj['avg']
-	})
-
-	var colors = process.dataToColors(gameTaps)
-
-	assignColors(colors)
-
-	var newbie = {}
-	newbie[10.5] = rawData['gameTaps'][10.5]['avg']
-	for (var i = 0; i < 40; i++) {
-		newbie[i] = rawData['gameTaps'][i]['avg']
-	}
-
-	console.log(newbie)
 
 }])
 
@@ -253,40 +260,5 @@ DataOpoly.factory('preloads', function() {
 		bottomRow : bottomRow,
 		gameTaps  : gameTaps,
 		text 	  : text
-	}
-})
-
-// 'route' and 'load' very similar, could combine into one?
-
-DataOpoly.factory('load', function() {
-	var change = function(mode, scope) {
-		if (mode !== 'locByTurn' && mode !== 'tapped') {
-			scope.turnSelector = false
-		} else {
-			scope.turnSelector = true
-		}
-		var data = load(mode)
-	}
-
-// rawData
-
-	var load = function(mode, info) {
-		var data = ''
-		if (mode == 'firstTaps' || mode == 'gameTaps') {
-			data = 'load data.txt, then parse'
-		} else {
-			data = 'load X.txt'
-		}
-		return data
-	}
-
-	'drive.files.get'
-
-	var parseData = function(rawData, path) {
-		'the specific attribute i\'m looking for'
-	}
-	return {
-		change : change,
-		load : load
 	}
 })

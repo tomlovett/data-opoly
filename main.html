@@ -12,14 +12,14 @@
 
 	<div class="toolbar">
 		<div class="toolbarTop">
-			<button ng-click="changeMode('gameTaps')">Game Taps</button>
-			<button ng-click="changeMode('firstTaps')">First Taps</button>
-			<button ng-click="changeMode('locByTurn')">Location By Turn</button>
-			<button ng-click="changeMode('tapped')">Tapped</button>
-			<button ng-click="changeMode('preds')">Predecessors</button>
-			<button ng-click="changeMode('succs')">Successors</button>
+			<button ng-click="tapDisplays('gameTaps')">Game Taps</button>
+			<button ng-click="tapDisplays('firstTaps')">First Taps</button>
+			<button ng-click="turnDisplays('locByTurn')">Location By Turn</button>
+			<button ng-click="turnDisplays('tapped')">Tapped</button>
+			<button ng-click="predSuccs('preds')">Predecessors</button>
+			<button ng-click="predSuccs('succs')">Successors</button>
 
-			<span ng-show="turnSelector">Turn: </span><input type="text" inputmode="numeric" maxlength="2" value="0" ng-model="turn" ng-show="turnSelector">
+			<span ng-show="turnSelector">Turn: </span><input type="text" inputmode="numeric" maxlength="2" value="0" ng-model="turn" ng-show="turnSelector" ng-change="turnDisplays(mode)">
 		</div>
 		<div class="toolbarBottom">
 			<p>{{bottomText}}</p>
