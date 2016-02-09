@@ -14,12 +14,12 @@ DataOpoly.controller('primary', ['$scope', 'process', 'preloads', 'load', functi
 		$scope.mode = mode
 		var data = load.change(mode, $scope)
 		$scope.bottomText = preloads.text[mode]
-		data = process.processRawData(data)
+		data = process.dataToColors(data)
 		assignColors(data)
 	}
 
 	$scope.fire = function(id) {
-		console.log('fire: ', id) // issue with Jail/JV
+		console.log('fire: ', id) // issue with Jail/JV on top of each other
 		if ($scope.mode == 'preds' || $scope.mode == 'succs') {
 			$scope.predSuccs(id, $scope.mode)
 		} else {
@@ -28,7 +28,7 @@ DataOpoly.controller('primary', ['$scope', 'process', 'preloads', 'load', functi
 	}
 
 	var displayData = function(id, mode) {
-		return '?'
+		return 'data specific to that tile'
 	}
 
 	var assignColors = function(colorSet) {
@@ -44,7 +44,7 @@ DataOpoly.controller('primary', ['$scope', 'process', 'preloads', 'load', functi
 		// return obj['std_dev'] / obj['avg']
 	})
 
-	var colors = process.processRawData(gameTaps)
+	var colors = process.dataToColors(gameTaps)
 
 
 	assignColors(colors)
@@ -53,7 +53,7 @@ DataOpoly.controller('primary', ['$scope', 'process', 'preloads', 'load', functi
 
 DataOpoly.factory('process', function() {
 
-	var processRawData = function(data) {
+	var dataToColors = function(data) {
 		var min = _.min(_.values(data))
 		var max = _.max(_.values(data))
 		data = normalizeDataSet(data, min, max)
@@ -87,10 +87,9 @@ DataOpoly.factory('process', function() {
 			diff    = val - floor
 		}
 
-		var rgb = 'rgb('		
-		rgb += getColorValue(floor, ceiling, diff, 'red'  ) + ', '
-		rgb += getColorValue(floor, ceiling, diff, 'green')
-		return rgb + ', 0)'		// returns 'rgb(x, x, 0)'
+		var red = getColorValue(floor, ceiling, diff, 'red'  )
+		var green = getColorValue(floor, ceiling, diff, 'green')
+		return 'rgb(' + red + ', ' + green + ', 0)'
 	}
 
 	var colors = [
@@ -108,7 +107,7 @@ DataOpoly.factory('process', function() {
 	}
 
 	return {
-		processRawData : processRawData
+		dataToColors : dataToColors
 	}
 })
 
@@ -123,7 +122,6 @@ DataOpoly.factory('preloads', function() {
 	    setColor : function(color) {
 			this.color = { 
 				'background-color': color,
-				'opacity' : '.70'
 			}
 		},
 		setHover : function(text) {
@@ -266,13 +264,20 @@ DataOpoly.factory('load', function() {
 	var load = function(mode, info) {
 		var data = ''
 		if (mode == 'firstTaps' || mode == 'gameTaps') {
-			data = 'load basic from file'
+			data = 'load data.txt, then parse'
 		} else {
-			data = 'load 0'
+			data = 'load X.txt'
 		}
 		return data
 	}
+
+	'drive.files.get'
+
+	var parseData = function(rawData, path) {
+		'the specific attribute i\'m looking for'
+	}
 	return {
-		change : change
+		change : change,
+		load : load
 	}
 })

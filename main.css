@@ -28,13 +28,15 @@ div {
 .corner.tile {
 	height: 65px;
 	width: 65px;
-	border: 1px solid red;
+	border: 1px solid black;
+	opacity: .7;
 }
 
 .tile {
 	height: 66px;
 	width: 38.25px;
-	border: 1px solid red;
+	border: 1px solid black;
+	opacity: .7;
 }
 
 .tile.prop {
@@ -80,5 +82,5 @@ div {
 	right: 0;
 	height: 50px;
 	width: 50px;
-	border: 1px solid red;
+	border: 1px solid black;
 }
