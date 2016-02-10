@@ -24,7 +24,7 @@
 				<button ng-click="tapUpdate('stdDev')">Standard Deviation</button>
 			</div>
 
-			<span ng-show="turnSelector">Turn: </span><input type="text" inputmode="numeric" maxlength="2" value="0" ng-model="turn" ng-show="turnSelector" ng-change="routeDisplay(mode)" ng-keydown="turnDownForWhat($event)">
+			<span ng-show="turnSelector">Turn: </span><input id="turnBox" type="text" value="0" ng-model="turn" ng-show="turnSelector" ng-change="routeDisplay(mode)" ng-keydown="turnDownForWhat($event)">
 
 		</div>
 		<div class="toolbarBottom">
@@ -35,24 +35,27 @@
 	<div class="board">
 
 		<div class="row">
-			<div ng-repeat="tile in topRow" class="tile" ng-class="tile.styles" ng-style="tile.color" ng-click="fire(tile.id)"></div>
+			<div ng-repeat="tile in topRow" class="tile" ng-class="tile.ngClass" ng-style="tile.ngStyle" ng-click="fire(tile.id, $event)"></div>
 		</div>
 
 		<div class="leftCol">
-			<div ng-repeat="tile in leftCol" class="tile horiz" ng-class="tile.styles" ng-style="tile.color" ng-click="fire(tile.id)"></div>
+			<div ng-repeat="tile in leftCol" class="tile horiz" ng-class="tile.ngClass" ng-style="tile.ngStyle" ng-click="fire(tile.id)"></div>
 		</div>
+		
 		<h1>DATA-OPOLY!</h1>
+		<div class="dataTable"></div>
+		
 		<div class="rightCol">
-			<div ng-repeat="tile in rightCol" class="tile horiz" ng-class="tile.styles" ng-style="tile.color" ng-click="fire(tile.id)"></div>
+			<div ng-repeat="tile in rightCol" class="tile horiz" ng-class="tile.ngClass" ng-style="tile.ngStyle" ng-click="fire(tile.id)"></div>
 		</div>
 
 
 		<div class="row bottom">
-			<div class="tile corner bottom" ng-class="tiles[10].styles" ng-style="tiles[10].color" ng-click="fire(10)">
+			<div class="tile corner bottom" ng-class="tiles[10].ngClass" ng-style="tiles[10].ngStyle" ng-click="fire(10)">
 				<div class="Jail" style="background-color: white;"></div>
-				<div class="Jail" ng-class="tiles[10.5].styles" ng-style="tiles[10.5].color" ng-click="fire(10.5)"></div>
+				<div class="Jail" ng-class="tiles[10.5].ngClass" ng-style="tiles[10.5].ngStyle" ng-click="fire(10.5)"></div>
 			</div>
-			<div ng-repeat="tile in bottomRow" class="tile" ng-class="tile.styles" ng-style="tile.color" ng-click="fire(tile.id)"></div>
+			<div ng-repeat="tile in bottomRow" class="tile" ng-class="tile.ngClass" ng-style="tile.ngStyle" ng-click="fire(tile.id)"></div>
 		</div>
 	</div>
 

@@ -22,14 +22,12 @@ DataOpoly.controller('primary', ['$scope', 'process', 'preloads', function($scop
 
 	$scope.bottomText = preloads.text[$scope.mode]
 
-	$scope.fire = function(id) {
+	$scope.fire = function(id, event) {
 		$scope.liveTile.unHighlight()
 		$scope.liveTile = $scope.tiles[id]  // issue with J/JV overlap
 		$scope.liveTile.highlight()
 		if ($scope.mode == 'preds' || $scope.mode == 'succs') {
 			$scope.routeDisplay($scope.mode)
-		} else {
-			hoverData()
 		}
 	}
 
@@ -47,8 +45,10 @@ DataOpoly.controller('primary', ['$scope', 'process', 'preloads', function($scop
 			tapsTurnsTiles(true, false, false)
 		} else if (mode == 'locByTurn' || mode == 'tapped') {
 			if ($scope.turn > 20) $scope.turn = 20
+			if ($scope.turn < 0 ) $scope.turn = 0
 			attr = $scope.turn
 			tapsTurnsTiles(false, true, false)
+			document.getElementById('turnBox').focus()
 		} else {
 			attr = $scope.liveTile.id
 			tapsTurnsTiles(false, false, true)
@@ -59,19 +59,13 @@ DataOpoly.controller('primary', ['$scope', 'process', 'preloads', function($scop
 	var tapsTurnsTiles = function(taps, turns, tiles) {
 		$scope.tapSelector  = taps
 		$scope.turnSelector = turns
-		if (!turns) { $scope.turn     = 0 }
+		if (!turns) { $scope.turn = 0 }
 	}
 
 	$scope.updateDisplay = function(attr) {
 		$scope.data = rawData[$scope.mode][attr]
 		var data = process.dataToColors($scope.data, $scope.mode)
 		assignColors(data)
-	}
-
-	var hoverData = function() {
-		// $scope.bottomText = $scope.liveTile
-		// displaying tile data, but how/what?
-		return 
 	}
 
 	var assignColors = function(colorSet) {
@@ -102,12 +96,10 @@ DataOpoly.factory('process', function() {
 		var min = _.min(_.values(data))
 		var max = _.max(_.values(data))
 		if (mode === 'tapped') {
-			min = 0;
-			max = 1;
+			min = 0
+			max = 1
 		}
-		if (max !== 0) {
-			data = normalizeDataSet(data, min, max)
-			}
+		if (max > 0) { data = normalizeDataSet(data, min, max) }
 		var colorSet = _.mapObject(data, function(val) {
 			return numberToColor(val)
 		})
@@ -116,31 +108,21 @@ DataOpoly.factory('process', function() {
 
 	var normalizeDataSet = function(dataSet, min, max) {
 		var output = _.mapObject(dataSet, function(val) {
-			if (max - min <= 0) return 0
-			return (val - min)/(max - min)
+			if (max - min <= 0) { return 0 } // catch for division by zero
+			else 				{ return (val - min)/(max - min) }
 		})
 		return output
 	}
 
-	var numberToColor = function(val) {  // this section needs cleaning up
-		var floor   = 0
-		var ceiling = 0
-		var diff    = 0
-		if (val <= 0) {
-			floor   = 0
-			ceiling = 0
-		} else if (val >= 1) {
-			floor   = 2
-			ceiling = 2
-		} else {
-			val     = val * 2
-			floor   = Math.floor(val)
-			ceiling = floor + 1
-			diff    = val - floor
-		}
+	var numberToColor = function(val) {
+		var index1 = Math.floor(val * 2)
+		var index2 = index1 + 1
+		var diff   = (val * 2) - index1
+		if      (val <= 0) { index2 = 0 }
+		else if (val >= 1) { index2 = 2 }
 
-		var red = getColorValue(floor, ceiling, diff, 'red'  )
-		var green = getColorValue(floor, ceiling, diff, 'green')
+		var red   = getColorValue(index1, index2, diff, 'red'  )
+		var green = getColorValue(index1, index2, diff, 'green')
 		return 'rgb(' + red + ', ' + green + ', 0)'
 	}
 
@@ -150,10 +132,10 @@ DataOpoly.factory('process', function() {
 		{ red: 255, green:   0  }  	// pure red
 	]
 
-	var getColorValue = function (floor, ceiling, diff, color) {
-		var lowerVal = colors[floor][color]
-		var upperVal = colors[ceiling][color]
-		var colorVal = lowerVal + (upperVal - lowerVal) * diff
+	var getColorValue = function (index1, index2, diff, color) {
+		var lowerVal = colors[index1][color]
+		var upperVal = colors[index2][color]
+		var colorVal = lowerVal + ((upperVal - lowerVal) * diff)
 		colorVal = Math.round(colorVal)
 		return colorVal.toString()
 	}
@@ -164,23 +146,24 @@ DataOpoly.factory('process', function() {
 })
 
 DataOpoly.factory('preloads', function() {
-	var Tile = function(id, styles) {
+	var Tile = function(id, ngClass) {
 		this.id = id
-		this.styles = styles
-		this.color = {}
+		this.ngClass = ngClass
+		this.ngStyle = {}
 	}
 
 	Tile.prototype = {
 	    setColor : function(color) {
-			this.color = { 
+			this.ngStyle = { 
 				'background-color': color,
 			}
 		},
 		highlight : function() {
-			this.color['border'] = '1px solid white'
+			this.ngStyle['border'] = '1.5px solid white'
+
 		},
 		unHighlight : function() {
-			var color = this.color['background-color']
+			var color = this.ngStyle['background-color']
 			this.setColor(color)
 		}
 
@@ -236,8 +219,8 @@ DataOpoly.factory('preloads', function() {
 		firstTaps : '  The average turn that a tile is landed on for the first time.\n  I expected to find that certain tiles tended to go sooner than others. In fact, the most salient data from this metric is just how much it varied from game to game. Besides a rough correlation between a tile\'s tap frequency there is little predictability/consistency in the order that properties are first sold.',
 		locByTurn : '  Player\'s locations by turn.\n  I expected to see players moving in groups, being near the same locations around the same turns for a large portion of the game. In fact, players move more or less in a group for the first ten turns, then spread rather evenly across the board for the remainder of the game. Data from the twentieth turn on more or less resembles the \"Game Taps\" display. We also find that the first \"lap\" of the board takes about five turns.\n Caveats: To simulate real-game conditions, AI players sought to escape Jail early in the game (to pick up more properties) and to stay in Jail later in the game (to avoid landing on costly properties). Turn twenty was the point at which players stopped paying to leave Jail early and remained until they rolled doubles or had been in Jail for three turns.\n As one can see, this small shift in strategy greatly affects the distribution of player locations. Rather than being evenly distributed across the board, players are concentrated in Jail. Data from turns after twenty closely resemble the data from turn twenty so it was left out.',
 		tapped : '  The likelihood that a tile has been landed on by a specific turn, normalized from 0-100%.\n  Here we find a slightly less dramatic pattern similar to \"Location by Turn.\" We see the players making a lap of the board in the first five turns, picking up some tiles along the way. From turns five through ten the players again make their way around the board, picking up yet more tiles. By the time we get to turn twenty most of the properties have been landed on and sold among the players.\n  On average, it took thirty-one turns for four players to land on all of the available properties, with a standard deviation of ten turns. So while it is more than likely that any specific tile has been sold by turn six, it can take another twenty-five turns before the last properties have been landed on.',
-		preds : '  Clicking on a tile shows where players began their turn prior to finishing it on that tile. (Clicking on Boardwalk will show you where players who landed on Boardwalk began their turn.)\n  This metric is designed to show the   \n  Caveats: Monopoly is played with two six-sided dice. The most likely outcome of rolling two six-sided dice is 7. So it is not surprising that most of the traffic for any given tile comes from the tile seven spaces prior. Except for when the tile seven spaces prior is "Go To Jail" or Chance, which often moves a player around the board.\n Normalizing the data places more emphasis on the tile seven spaces prior. Without that normalization we can see other "hot" tiles across the board that lead to a given tile. For instance, the railroads see a greater-than-average amount of traffic from Chance tiles, as there is a Chance card that sends players to the nearest railroad.',
-		succs : '  Clicking on a tile shows where players are likely to end their turn after starting on a particular tile.\n  strategy for when a player is advancing into dangerous territory'
+		preds : '  Clicking on a tile shows where players began their turn prior to finishing it on that tile. (Clicking on Boardwalk will show you where players who landed on Boardwalk began their turn.)\n  This metric is designed to show the   \n  Caveats: Monopoly is played with two six-sided dice. The most likely outcome of rolling two six-sided dice is 7. So it is not surprising that most of the traffic for any given tile comes from the tile seven spaces prior. Except for when the tile seven spaces prior is "Go To Jail" or Chance, which often moves a player around the board.\n Normalizing the data places more emphasis on the tile seven spaces prior. Without that normalization we can see other "hot" tiles across the board that lead to a given tile. For instance, the railroads see a greater-than-average amount of traffic from Chance tiles, as there is a Chance card that sends players to the nearest railroad.\n Interesting tiles: Bottom Row, Left Row',
+		succs : '  Clicking on a tile shows where players are likely to end their turn after starting on a particular tile.\n  Interesting tiles: Virginia Ave, Oranges, Free Parking'
 	}
 
 	var topRow = _.map([20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30], function(index) {
