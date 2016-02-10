@@ -39,23 +39,23 @@
 		</div>
 
 		<div class="leftCol">
-			<div ng-repeat="tile in leftCol" class="tile horiz" ng-class="tile.ngClass" ng-style="tile.ngStyle" ng-click="fire(tile.id)"></div>
+			<div ng-repeat="tile in leftCol" class="tile horiz" ng-class="tile.ngClass" ng-style="tile.ngStyle" ng-click="fire(tile.id, $event)"></div>
 		</div>
 		
 		<h1>DATA-OPOLY!</h1>
 		<div class="dataTable"></div>
 		
 		<div class="rightCol">
-			<div ng-repeat="tile in rightCol" class="tile horiz" ng-class="tile.ngClass" ng-style="tile.ngStyle" ng-click="fire(tile.id)"></div>
+			<div ng-repeat="tile in rightCol" class="tile horiz" ng-class="tile.ngClass" ng-style="tile.ngStyle" ng-click="fire(tile.id, $event)"></div>
 		</div>
 
 
 		<div class="row bottom">
-			<div class="tile corner bottom" ng-class="tiles[10].ngClass" ng-style="tiles[10].ngStyle" ng-click="fire(10)">
+			<div class="tile corner bottom" ng-class="tiles[10].ngClass" ng-style="tiles[10].ngStyle" ng-click="fire(10, $event)">
 				<div class="Jail" style="background-color: white;"></div>
-				<div class="Jail" ng-class="tiles[10.5].ngClass" ng-style="tiles[10.5].ngStyle" ng-click="fire(10.5)"></div>
+				<div class="Jail" ng-class="tiles[10.5].ngClass" ng-style="tiles[10.5].ngStyle" ng-click="fire(10.5, $event)"></div>
 			</div>
-			<div ng-repeat="tile in bottomRow" class="tile" ng-class="tile.ngClass" ng-style="tile.ngStyle" ng-click="fire(tile.id)"></div>
+			<div ng-repeat="tile in bottomRow" class="tile" ng-class="tile.ngClass" ng-style="tile.ngStyle" ng-click="fire(tile.id, $event)"></div>
 		</div>
 	</div>
 

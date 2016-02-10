@@ -1,8 +1,6 @@
-// color code key on the right
-// explanatory text
-// rotate h1 in middle of board
-// brighter/more vivid highlight?
-// "hover data"
+// color code key on the right // nahhhhh...
+// explanatory text formatting
+// clicking on jail
 
 
 var DataOpoly = angular.module('Data-opoly', [])
@@ -23,8 +21,10 @@ DataOpoly.controller('primary', ['$scope', 'process', 'preloads', function($scop
 	$scope.bottomText = preloads.text[$scope.mode]
 
 	$scope.fire = function(id, event) {
+		event.preventDefault()
 		$scope.liveTile.unHighlight()
 		$scope.liveTile = $scope.tiles[id]  // issue with J/JV overlap
+		console.log($scope.liveTile)
 		$scope.liveTile.highlight()
 		if ($scope.mode == 'preds' || $scope.mode == 'succs') {
 			$scope.routeDisplay($scope.mode)
@@ -95,7 +95,7 @@ DataOpoly.factory('process', function() {
 	var dataToColors = function(data, mode) {
 		var min = _.min(_.values(data))
 		var max = _.max(_.values(data))
-		if (mode === 'tapped') {
+		if (mode === 'tapped') { // auto-normalize [0-1]
 			min = 0
 			max = 1
 		}
@@ -108,8 +108,11 @@ DataOpoly.factory('process', function() {
 
 	var normalizeDataSet = function(dataSet, min, max) {
 		var output = _.mapObject(dataSet, function(val) {
-			if (max - min <= 0) { return 0 } // catch for division by zero
-			else 				{ return (val - min)/(max - min) }
+			try { 
+				return (val - min)/(max - min) 
+			} catch (divByZero) { 
+				return 0 
+			}
 		})
 		return output
 	}
@@ -118,8 +121,8 @@ DataOpoly.factory('process', function() {
 		var index1 = Math.floor(val * 2)
 		var index2 = index1 + 1
 		var diff   = (val * 2) - index1
-		if      (val <= 0) { index2 = 0 }
-		else if (val >= 1) { index2 = 2 }
+		if      (val <= 0) { index2 = 0 } // sets 0's to pure green
+		else if (val >= 1) { index2 = 2 } // sets 1's to pure red 
 
 		var red   = getColorValue(index1, index2, diff, 'red'  )
 		var green = getColorValue(index1, index2, diff, 'green')
@@ -166,7 +169,6 @@ DataOpoly.factory('preloads', function() {
 			var color = this.ngStyle['background-color']
 			this.setColor(color)
 		}
-
 	}
 
 	var tiles = {
