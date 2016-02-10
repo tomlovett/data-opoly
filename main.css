@@ -3,6 +3,13 @@ div {
 	position: relative;
 }
 
+h1 {
+	position: absolute;
+	font-family: Helvetica;
+	top: 40%;
+	left: 27.5%;
+}
+
 .toolbar {
 	float: right;
 	border: 1px solid black;

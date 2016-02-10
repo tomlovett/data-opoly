@@ -1,5 +1,8 @@
 // color code key on the right
 // explanatory text
+// rotate h1 in middle of board
+// brighter/more vivid highlight?
+// "hover data"
 
 
 var DataOpoly = angular.module('Data-opoly', [])
@@ -21,7 +24,7 @@ DataOpoly.controller('primary', ['$scope', 'process', 'preloads', function($scop
 
 	$scope.fire = function(id) {
 		$scope.liveTile.unHighlight()
-		$scope.liveTile = $scope.tiles[id]  // issue with Jail/Just Visiting overlap
+		$scope.liveTile = $scope.tiles[id]  // issue with J/JV overlap
 		$scope.liveTile.highlight()
 		if ($scope.mode == 'preds' || $scope.mode == 'succs') {
 			$scope.routeDisplay($scope.mode)
@@ -57,12 +60,11 @@ DataOpoly.controller('primary', ['$scope', 'process', 'preloads', function($scop
 		$scope.tapSelector  = taps
 		$scope.turnSelector = turns
 		if (!turns) { $scope.turn     = 0 }
-		if (!tiles) { $scope.liveTile = $scope.tiles[0] }
 	}
 
 	$scope.updateDisplay = function(attr) {
-		var data = rawData[$scope.mode][attr]
-		data = process.dataToColors(data, $scope.mode)
+		$scope.data = rawData[$scope.mode][attr]
+		var data = process.dataToColors($scope.data, $scope.mode)
 		assignColors(data)
 	}
 
@@ -77,6 +79,7 @@ DataOpoly.controller('primary', ['$scope', 'process', 'preloads', function($scop
 		for (var i = 0; i < 40; i++) {
 			$scope.tiles[i].setColor(colorSet[i])
 		}
+		$scope.liveTile.highlight() // workaround for preds/succs
 	}
 
 	$scope.turnDownForWhat = function(event) {
@@ -229,12 +232,12 @@ DataOpoly.factory('preloads', function() {
 
 
 	var text = {
-		gameTaps : 'How many times a player lands on each tile. (A \"tap\" is recorded every time a player lands on a tile, even if they do not finish their turn there.)\n  This is the most salient data from the simulation. Some notable points:\n - The Reds see the most traffic of any monopoly. The Oranges and Yellows also see a lot of traffic, but the third Orange sees the most of its set while the third Yellow sees the least of its set. This is very important for strategy as the last property in any set has the highest rent and the greatest impact. The Greens are also weakened by their third property being the least-busy.\n - "Go To Jail" acts a significant filter. It is on the busiest tiles on the board. This filter clearly reduces the amount of traffic for Boardwalk & Park Place, the two strongest tiles on the board. - The Dark Purples (Baltic & Mediterranean) see less traffic than the Light Purples, but are a better investment given their low building costs. ',
+		gameTaps : '  How many times a player lands on each tile. (A \"tap\" is recorded every time a player lands on a tile, even if they do not finish their turn there.)\n  This is the most salient data from the simulation. Some notable points:\n - The Reds see the most traffic of any monopoly. The Oranges and Yellows also see a lot of traffic, but the third Orange sees the most of its set while the third Yellow sees the least of its set. This is very important for strategy as the last property in any set has the highest rent and the greatest impact. The Greens are also weakened by their third property being the least-busy.\n - "Go To Jail" acts a significant filter. It is on the busiest tiles on the board. This filter clearly reduces the amount of traffic for Boardwalk & Park Place, the two strongest tiles on the board. Park Place is particularly affected because it comes seven tiles after "Go To Jail." - The Dark Purples (Baltic & Mediterranean) see less traffic than the Light Purples, but are a good investment given their low costs relative to rent. (Houses cost $50 each but Baltic Ave with a hotel charges $450, recouping nearly all of the investment on the first hit.)',
 		firstTaps : '  The average turn that a tile is landed on for the first time.\n  I expected to find that certain tiles tended to go sooner than others. In fact, the most salient data from this metric is just how much it varied from game to game. Besides a rough correlation between a tile\'s tap frequency there is little predictability/consistency in the order that properties are first sold.',
 		locByTurn : '  Player\'s locations by turn.\n  I expected to see players moving in groups, being near the same locations around the same turns for a large portion of the game. In fact, players move more or less in a group for the first ten turns, then spread rather evenly across the board for the remainder of the game. Data from the twentieth turn on more or less resembles the \"Game Taps\" display. We also find that the first \"lap\" of the board takes about five turns.\n Caveats: To simulate real-game conditions, AI players sought to escape Jail early in the game (to pick up more properties) and to stay in Jail later in the game (to avoid landing on costly properties). Turn twenty was the point at which players stopped paying to leave Jail early and remained until they rolled doubles or had been in Jail for three turns.\n As one can see, this small shift in strategy greatly affects the distribution of player locations. Rather than being evenly distributed across the board, players are concentrated in Jail. Data from turns after twenty closely resemble the data from turn twenty so it was left out.',
-		tapped : '   The likelihood that a tile has been landed on by a specific turn, normalized from 0-100%.\n  Here we find a slightly less dramatic pattern similar to \"Location by Turn.\" We see the players making a lap of the board in the first five turns, picking up some tiles along the way. From turns five through ten the players again make their way around the board, picking up yet more tiles. By the time we get to turn twenty most of the properties have been landed on and sold among the players.\n  On average, it took thirty-one turns for four players to land on all of the available properties, with a standard deviation of ten turns. So while it is more than likely that any specific tile has been sold by turn six, it can take another twenty-five turns before the last properties have been landed on.',
+		tapped : '  The likelihood that a tile has been landed on by a specific turn, normalized from 0-100%.\n  Here we find a slightly less dramatic pattern similar to \"Location by Turn.\" We see the players making a lap of the board in the first five turns, picking up some tiles along the way. From turns five through ten the players again make their way around the board, picking up yet more tiles. By the time we get to turn twenty most of the properties have been landed on and sold among the players.\n  On average, it took thirty-one turns for four players to land on all of the available properties, with a standard deviation of ten turns. So while it is more than likely that any specific tile has been sold by turn six, it can take another twenty-five turns before the last properties have been landed on.',
 		preds : '  Clicking on a tile shows where players began their turn prior to finishing it on that tile. (Clicking on Boardwalk will show you where players who landed on Boardwalk began their turn.)\n  This metric is designed to show the   \n  Caveats: Monopoly is played with two six-sided dice. The most likely outcome of rolling two six-sided dice is 7. So it is not surprising that most of the traffic for any given tile comes from the tile seven spaces prior. Except for when the tile seven spaces prior is "Go To Jail" or Chance, which often moves a player around the board.\n Normalizing the data places more emphasis on the tile seven spaces prior. Without that normalization we can see other "hot" tiles across the board that lead to a given tile. For instance, the railroads see a greater-than-average amount of traffic from Chance tiles, as there is a Chance card that sends players to the nearest railroad.',
-		succs : '  Clicking on a tile shows where players are likely to end their turn when they start on that tile.\n  This metric is designed to give a player in '
+		succs : '  Clicking on a tile shows where players are likely to end their turn after starting on a particular tile.\n  strategy for when a player is advancing into dangerous territory'
 	}
 
 	var topRow = _.map([20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30], function(index) {
