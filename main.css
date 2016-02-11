@@ -21,6 +21,11 @@ h1 {
 	transform: rotate(-45deg);
 }
 
+p {
+	font-size: .8em
+	font-family: Helvetica;
+}
+
 .toolbar {
 	float: right;
 	border: 1px solid black;
