@@ -1,10 +1,27 @@
 Backstory:
 - I grew up playing Monopoly with my family. Over the years we developed theories about which monopolies were strong, which were weak. I took an Python course online that taught how to do Monte Carlo Simulations; by simulating a game 10,000 times you eliminate most of the variance.
+- I wanted to test my family's theories against hard data and possibly learn new aspects of strategy. This was also supposed to be my portfolio project when I was studying on my own. After a month and a half I realized I was in over my head, and that's when I decided to attend RefactorU.
 
-How to use it:
+What it is, How to use it:
+- The browser initiates on "Game Taps," a visualization of the average traffic each tile sees in the course of a game. Green means less traffic, red means more.
+- "First Taps" is a visualization of how quickly tiles are landed on for the first time; so when players get the opportunity to purchase a property. Here green means it's sold sooner, red, later. You can see how closely it resembles "Game Taps"; that's because...
+- When we follow player locations with "Location by Turn" we can see a general progression over the first ten turns. (Scroll through.) We can see a general, if loose, pattern of movement. At turn 4 we see "Go To Jail" acting as a filter, sending players to Jail. By turn 10 players have scattered themselves around the board.
+- There wasn't much coding involved in player decisions. In Monopoly, there is an advantage to not being in Jail in the early stages of the game (to buy up property); and an advantage to being in Jail later in the game (to avoid houses and hotels). Up to turn 20 players would buy their way out of Jail at first opportunity, while after turn 20 they would only leave on doubles or after three turns. You can see how dramatically this shift the distribution to favor Jail. (Late in the game when everyone does their jail roll while watching one player make their way through the gauntlet.)
+- This last set is one of my favorites. I recorded where players finished their turns relative to where they began. So if a player began their turn on Boardwalk and ended it on Reading Railroad, Reading's predecessor would be Boardwalk, and Boardwalk's successor would be Reading.
+  - Where does this play into strategy? By using "Successors" you can get a better idea of how much danger you (or another player) are in, relative to the danger another player is in. Often you get into a situation where you have to choose between spending cash to hopefully catch an opponent right before they land on your property, or holding on to it in the event that you land on someone else's hotel.
+  - Predecessors is good for high-level strategy and personal interest. Like where do most people who land on Boardwalk come from?
 
-What it's used for:
 
-(How it's made:)
+Findings:
+- Oranges, Reds and Yellows are the strongest, most reliable monopolies on the board. The Blues are also very powerful, but given their variance and low baseline traffic it can be very boom-or-bust.
+- Jail acts a filter. Also reduces the traffic to Park Place since it is seven tiels prior to it.
+- Contrary to my expectations, the order in which properties are sold is varies wildly random from game to game. I expected to find a tighter pattern of traffic in the early stages of the game, but as you can see in "Location by Turn" and "First Taps," that's not the case. This applies to how quickly all the properties are landed on as well. Both of these metrics have a very standard deviation relative to the average. (In a four-player game, it takes thirty-one turns on average to land on all the properties. But the standard deviation is ten turns; so most games take between twenty and forty turns.)
+
+Python notes:
+- The simulation operates through three main modules.
+- The first contains Game and Player objects that simulate a full game (with modifiable parameters) while logging all the data. There is a utility for handling Chance and CC cards.
+- The second module runs multiple simulations. It accumulates all the data from individual simulations and places them into a "master simulation" data object.
+- The third module parses the raw data and saves it to the hard drive.
 
 Other notes:
+- There are many more factors to the data than are displayed in this presentation. These are the most visually compelling metrics. There is so much variance between turns, and games that histograms would arguably be more effective than heat maps even for this data. That said, heat maps are fun.
