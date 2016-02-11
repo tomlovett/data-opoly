@@ -1,0 +1,10 @@
+Backstory:
+- I grew up playing Monopoly with my family. Over the years we developed theories about which monopolies were strong, which were weak. I took an Python course online that taught how to do Monte Carlo Simulations; by simulating a game 10,000 times you eliminate most of the variance.
+
+How to use it:
+
+What it's used for:
+
+(How it's made:)
+
+Other notes:

@@ -1,6 +1,6 @@
-// color code key on the right // nahhhhh...
 // explanatory text formatting
 // clicking on jail
+// top toolbar formatting
 
 
 var DataOpoly = angular.module('Data-opoly', [])
@@ -8,10 +8,12 @@ var DataOpoly = angular.module('Data-opoly', [])
 DataOpoly.controller('primary', ['$scope', 'process', 'preloads', function($scope, process, preloads) {
 
 	$scope.tiles     = preloads.tiles
-	$scope.topRow    = preloads.topRow
-	$scope.leftCol   = preloads.leftCol
-	$scope.rightCol  = preloads.rightCol
-	$scope.bottomRow = preloads.bottomRow
+	$scope.tileLoads = {
+		top    : preloads.top,
+		left   : preloads.left,
+		right  : preloads.right,
+		bottom : preloads.bottom
+	}
 
 	$scope.mode     = 'gameTaps'
 	$scope.tapsBtn  = 'avg'
@@ -68,16 +70,16 @@ DataOpoly.controller('primary', ['$scope', 'process', 'preloads', function($scop
 		assignColors(data)
 	}
 
-	var assignColors = function(colorSet) {
-		$scope.tiles[10.5].setColor(colorSet[10.5])
+	var assignColors = function(colorsObj) {
+		$scope.tiles[10.5].setColor(colorsObj[10.5])
 		for (var i = 0; i < 40; i++) {
-			$scope.tiles[i].setColor(colorSet[i])
+			$scope.tiles[i].setColor(colorsObj[i])
 		}
 		$scope.liveTile.highlight() // workaround for preds/succs
 	}
 
 	$scope.turnDownForWhat = function(event) {
-		if (event.keyCode == 38) {  // up key
+		if (event.keyCode == 38) {  	  // up key
 			$scope.turn += 1
 			$scope.routeDisplay($scope.mode)
 		} else if (event.keyCode == 40) { // down key
@@ -92,56 +94,72 @@ DataOpoly.controller('primary', ['$scope', 'process', 'preloads', function($scop
 
 DataOpoly.factory('process', function() {
 
+// I recommend against reading through this section because it is rather confusing. Essentially it converts raw data from the simulation into color values for each tile.  
+
 	var dataToColors = function(data, mode) {
 		var min = _.min(_.values(data))
 		var max = _.max(_.values(data))
-		if (mode === 'tapped') { // auto-normalize [0-1]
+		if (mode === 'tapped') { // normalize 'tapped' as [0-1]
 			min = 0
 			max = 1
 		}
 		if (max > 0) { data = normalizeDataSet(data, min, max) }
-		var colorSet = _.mapObject(data, function(val) {
+		var colorsObj = _.mapObject(data, function(val) {
 			return numberToColor(val)
 		})
-		return colorSet
+		return colorsObj
 	}
 
 	var normalizeDataSet = function(dataSet, min, max) {
-		var output = _.mapObject(dataSet, function(val) {
+		var normalized = _.mapObject(dataSet, function(val) {
 			try { 
 				return (val - min)/(max - min) 
 			} catch (divByZero) { 
 				return 0 
 			}
 		})
-		return output
+		return normalized
 	}
+
+/*
+ These two functions - numberToColor and calcColorInt convert a normalized float to a color value ranging from pure green to pure red.
+
+ "numberToColor" first determines whether the float value belongs on the green-yellow spectrum or the yellow-red spectrum. It does this by assigning index1 to either green or yellow, and index2 to yellow or red. (In the case of 0 both are set to green, in the case of 1 both are set to red.)
+
+  "diff" is where the float value belongs inbetween the two pure color values. How red a yellow-red is, or how green a yellow-green is.
+
+   "calcColorInt" does the visually-unappealing computation to return the integer values for each color, ranging 0-255. (Blue levels are not computed because neither green nor yellow nor red contain any blue. The value always returns 0.)
+
+  numberToColor then returns the color written in 'rgb(X, X, X)' notation so it can be directly assigned into a tile.
+*/
 
 	var numberToColor = function(val) {
 		var index1 = Math.floor(val * 2)
 		var index2 = index1 + 1
 		var diff   = (val * 2) - index1
-		if      (val <= 0) { index2 = 0 } // sets 0's to pure green
-		else if (val >= 1) { index2 = 2 } // sets 1's to pure red 
+		if      (val <= 0) { index2 = 0 } // sets both indices to 0
+		else if (val >= 1) { index2 = 2 } // sets both indices to 2
 
-		var red   = getColorValue(index1, index2, diff, 'red'  )
-		var green = getColorValue(index1, index2, diff, 'green')
+		var red   = calcColorInt(index1, index2, diff, 'red'  )
+		var green = calcColorInt(index1, index2, diff, 'green')
 		return 'rgb(' + red + ', ' + green + ', 0)'
 	}
 
-	var colors = [
-		{ red:   0, green: 255  }, 	// pure green
-		{ red: 255, green: 255  }, 	// pure yellow
-		{ red: 255, green:   0  }  	// pure red
-	]
 
-	var getColorValue = function (index1, index2, diff, color) {
+
+	var calcColorInt = function (index1, index2, diff, color) {
 		var lowerVal = colors[index1][color]
 		var upperVal = colors[index2][color]
 		var colorVal = lowerVal + ((upperVal - lowerVal) * diff)
 		colorVal = Math.round(colorVal)
 		return colorVal.toString()
 	}
+
+	var colors = [
+		{ red:   0, green: 255, blue : 0 },	// pure green
+		{ red: 255, green: 255, blue : 0 },	// pure yellow
+		{ red: 255, green:   0, blue : 0 } 	// pure red
+	]
 
 	return {
 		dataToColors : dataToColors
@@ -222,71 +240,26 @@ DataOpoly.factory('preloads', function() {
 		locByTurn : '  Player\'s locations by turn.\n  I expected to see players moving in groups, being near the same locations around the same turns for a large portion of the game. In fact, players move more or less in a group for the first ten turns, then spread rather evenly across the board for the remainder of the game. Data from the twentieth turn on more or less resembles the \"Game Taps\" display. We also find that the first \"lap\" of the board takes about five turns.\n Caveats: To simulate real-game conditions, AI players sought to escape Jail early in the game (to pick up more properties) and to stay in Jail later in the game (to avoid landing on costly properties). Turn twenty was the point at which players stopped paying to leave Jail early and remained until they rolled doubles or had been in Jail for three turns.\n As one can see, this small shift in strategy greatly affects the distribution of player locations. Rather than being evenly distributed across the board, players are concentrated in Jail. Data from turns after twenty closely resemble the data from turn twenty so it was left out.',
 		tapped : '  The likelihood that a tile has been landed on by a specific turn, normalized from 0-100%.\n  Here we find a slightly less dramatic pattern similar to \"Location by Turn.\" We see the players making a lap of the board in the first five turns, picking up some tiles along the way. From turns five through ten the players again make their way around the board, picking up yet more tiles. By the time we get to turn twenty most of the properties have been landed on and sold among the players.\n  On average, it took thirty-one turns for four players to land on all of the available properties, with a standard deviation of ten turns. So while it is more than likely that any specific tile has been sold by turn six, it can take another twenty-five turns before the last properties have been landed on.',
 		preds : '  Clicking on a tile shows where players began their turn prior to finishing it on that tile. (Clicking on Boardwalk will show you where players who landed on Boardwalk began their turn.)\n  This metric is designed to show the   \n  Caveats: Monopoly is played with two six-sided dice. The most likely outcome of rolling two six-sided dice is 7. So it is not surprising that most of the traffic for any given tile comes from the tile seven spaces prior. Except for when the tile seven spaces prior is "Go To Jail" or Chance, which often moves a player around the board.\n Normalizing the data places more emphasis on the tile seven spaces prior. Without that normalization we can see other "hot" tiles across the board that lead to a given tile. For instance, the railroads see a greater-than-average amount of traffic from Chance tiles, as there is a Chance card that sends players to the nearest railroad.\n Interesting tiles: Bottom Row, Left Row',
-		succs : '  Clicking on a tile shows where players are likely to end their turn after starting on a particular tile.\n  Interesting tiles: Virginia Ave, Oranges, Free Parking'
+		succs : '  \"Successors\" is the inverse of \"Predecessors.\" Clicking on a tile shows where players are likely to end their turn after starting on a particular tile.\n  Interesting tiles: Virginia Ave, Oranges, Free Parking'
 	}
 
-	var topRow = _.map([20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30], function(index) {
+	var top    = _.map([20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30], function(index) {
 		return tiles[index]	})
-	var leftCol = _.map([19, 18, 17, 16, 15, 14, 13, 12, 11], function(index) {
+	var left   = _.map([19, 18, 17, 16, 15, 14, 13, 12, 11], function(index) {
 		return tiles[index]	})
-	var rightCol = _.map([31, 32, 33, 34, 35, 36, 37, 38, 39], function(index) { 
+	var right  = _.map([31, 32, 33, 34, 35, 36, 37, 38, 39], function(index) { 
 		return tiles[index] })
-	var bottomRow = _.map([9, 8, 7, 6, 5, 4, 3, 2, 1, 0], function(index) {
+	var bottom = _.map([9, 8, 7, 6, 5, 4, 3, 2, 1, 0], function(index) {
 		return tiles[index]	})
-
-	var gameTaps = {
-		"0":  { "std_dev": 2.25744, "perc_of_whole": 0.02113 }, 
-		"1":  { "std_dev": 2.22234, "perc_of_whole": 0.02104 }, 
-		"2":  { "std_dev": 2.27661, "perc_of_whole": 0.02154 }, 
-		"3":  { "std_dev": 2.32625, "perc_of_whole": 0.02226 }, 
-		"4":  { "std_dev": 2.33094, "perc_of_whole": 0.02282 }, 
-		"5":  { "std_dev": 2.36349, "perc_of_whole": 0.02357 }, 
-		"6":  { "std_dev": 2.38281, "perc_of_whole": 0.02436 }, 
-		"7":  { "std_dev": 2.49067, "perc_of_whole": 0.02545 }, 
-		"8":  { "std_dev": 2.43731, "perc_of_whole": 0.02523 }, 
-		"9":  { "std_dev": 2.44044, "perc_of_whole": 0.02499 }, 
-		"10": { "std_dev": 2.39305, "perc_of_whole": 0.02441 }, 
-		"11": { "std_dev": 2.38073, "perc_of_whole": 0.02401 }, 
-		"12": { "std_dev": 2.3747,  "perc_of_whole": 0.02361 }, 
-		"13": { "std_dev": 2.34013, "perc_of_whole": 0.02297 }, 
-		"14": { "std_dev": 2.33069, "perc_of_whole": 0.02301 }, 
-		"15": { "std_dev": 2.40994, "perc_of_whole": 0.02391 }, 
-		"16": { "std_dev": 2.42469, "perc_of_whole": 0.02419 }, 
-		"17": { "std_dev": 2.43205, "perc_of_whole": 0.0248  }, 
-		"18": { "std_dev": 2.44366, "perc_of_whole": 0.02527 }, 
-		"19": { "std_dev": 2.46918, "perc_of_whole": 0.02595 }, 
-		"20": { "std_dev": 2.49061, "perc_of_whole": 0.02607 }, 
-		"21": { "std_dev": 2.48428, "perc_of_whole": 0.02612 }, 
-		"22": { "std_dev": 2.52613, "perc_of_whole": 0.0264  }, 
-		"23": { "std_dev": 2.51357, "perc_of_whole": 0.02693 }, 
-		"24": { "std_dev": 2.46224, "perc_of_whole": 0.02664 }, 
-		"25": { "std_dev": 2.48082, "perc_of_whole": 0.02657 }, 
-		"26": { "std_dev": 2.50427, "perc_of_whole": 0.02672 }, 
-		"27": { "std_dev": 2.48153, "perc_of_whole": 0.02631 }, 
-		"28": { "std_dev": 2.44913, "perc_of_whole": 0.02571 }, 
-		"29": { "std_dev": 2.43291, "perc_of_whole": 0.02547 }, 
-		"30": { "std_dev": 2.56629, "perc_of_whole": 0.02604 }, 
-		"31": { "std_dev": 2.48659, "perc_of_whole": 0.02631 }, 
-		"32": { "std_dev": 2.42057, "perc_of_whole": 0.02546 }, 
-		"33": { "std_dev": 2.43944, "perc_of_whole": 0.02485 }, 
-		"34": { "std_dev": 2.3693,  "perc_of_whole": 0.02419 }, 
-		"35": { "std_dev": 2.34448, "perc_of_whole": 0.02354 }, 
-		"36": { "std_dev": 2.36921, "perc_of_whole": 0.02245 }, 
-		"37": { "std_dev": 2.25849, "perc_of_whole": 0.02125 }, 
-		"38": { "std_dev": 2.27149, "perc_of_whole": 0.02119 }, 
-		"39": { "std_dev": 2.24529, "perc_of_whole": 0.02121 },
-		"10.5": {"std_dev": 2.56629, "perc_of_whole": 0.02604}
-	}
 
 	var totalTaps = 2719648
 
 	return {
-		tiles     : tiles,
-		topRow    : topRow,
-		leftCol   : leftCol,
-		rightCol  : rightCol,
-		bottomRow : bottomRow,
-		gameTaps  : gameTaps,
-		text 	  : text
+		tiles  : tiles,
+		top    : top,
+		left   : left,
+		right  : right,
+		bottom : bottom,
+		text   : text
 	}
 })

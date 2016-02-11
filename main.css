@@ -32,6 +32,12 @@ h1 {
 	width: 20px;
 }
 
+.spacer {
+	display: block;
+	height: 5px;
+	background-color: black;
+}
+
 .toolbarBottom {
 	height: 80%;
 	width: 100%;

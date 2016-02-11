@@ -19,6 +19,8 @@
 			<button ng-click="routeDisplay('preds')">Predecessors</button>
 			<button ng-click="routeDisplay('succs')">Successors</button>
 
+			<div class="spacer"></div>
+			
 			<div ng-show="tapSelector">
 				<button ng-click="tapUpdate('avg')">Average</button>
 				<button ng-click="tapUpdate('stdDev')">Standard Deviation</button>
@@ -35,18 +37,18 @@
 	<div class="board">
 
 		<div class="row">
-			<div ng-repeat="tile in topRow" class="tile" ng-class="tile.ngClass" ng-style="tile.ngStyle" ng-click="fire(tile.id, $event)"></div>
+			<div ng-repeat="tile in tileLoads.top" class="tile" ng-class="tile.ngClass" ng-style="tile.ngStyle" ng-click="fire(tile.id, $event)"></div>
 		</div>
 
 		<div class="leftCol">
-			<div ng-repeat="tile in leftCol" class="tile horiz" ng-class="tile.ngClass" ng-style="tile.ngStyle" ng-click="fire(tile.id, $event)"></div>
+			<div ng-repeat="tile in tileLoads.left" class="tile horiz" ng-class="tile.ngClass" ng-style="tile.ngStyle" ng-click="fire(tile.id, $event)"></div>
 		</div>
 		
 		<h1>DATA-OPOLY!</h1>
 		<div class="dataTable"></div>
 		
 		<div class="rightCol">
-			<div ng-repeat="tile in rightCol" class="tile horiz" ng-class="tile.ngClass" ng-style="tile.ngStyle" ng-click="fire(tile.id, $event)"></div>
+			<div ng-repeat="tile in tileLoads.right" class="tile horiz" ng-class="tile.ngClass" ng-style="tile.ngStyle" ng-click="fire(tile.id, $event)"></div>
 		</div>
 
 
@@ -55,7 +57,7 @@
 				<div class="Jail" style="background-color: white;"></div>
 				<div class="Jail" ng-class="tiles[10.5].ngClass" ng-style="tiles[10.5].ngStyle" ng-click="fire(10.5, $event)"></div>
 			</div>
-			<div ng-repeat="tile in bottomRow" class="tile" ng-class="tile.ngClass" ng-style="tile.ngStyle" ng-click="fire(tile.id, $event)"></div>
+			<div ng-repeat="tile in tileLoads.bottom" class="tile" ng-class="tile.ngClass" ng-style="tile.ngStyle" ng-click="fire(tile.id, $event)"></div>
 		</div>
 	</div>
 
