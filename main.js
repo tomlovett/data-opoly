@@ -21,7 +21,6 @@ DataOpoly.controller('primary', ['$scope', 'process', 'preloads', function($scop
 		event.stopPropagation()
 		$scope.liveTile.unHighlight()
 		$scope.liveTile = $scope.tiles[id]  // issue with J/JV overlap
-		console.log($scope.liveTile)
 		$scope.liveTile.highlight()
 		if ($scope.mode == 'preds' || $scope.mode == 'succs') {
 			$scope.routeDisplay($scope.mode)
